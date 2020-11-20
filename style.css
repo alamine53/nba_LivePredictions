@@ -1,0 +1,23 @@
+/* Whole document: */
+/*  @font-face {
+  font-family: SFMono-Medium;
+  font-weight: 400;
+  font-style: normal;
+  src: url(font/SFMono/SFMono-Medium.woff2?#iefix) format('woff2'), url(../font/SFMono/SFMono-medium.woff) format('woff'), url(../font/SFMono/SFMono-medium.ttf) format('truetype');
+}
+  @font-face {
+  font-family: SFMono-Regular;
+  font-weight: 100;
+  font-style: normal;
+  src: url(font/SFMono/SFMono-Regular.woff2?#iefix) format('woff2'), url(../font/SFMono/SFMono-Regular.woff) format('woff'), url(../font/SFMono/SFMono-Regular.ttf) format('truetype');
+}*/
+
+/* Headers */
+h1,h2,h3,h4,h5,h6{
+	font-family: Serif;
+	font-style: bold;
+}
+
+/*h1{
+	font-family: 'Roboto';
+}*/

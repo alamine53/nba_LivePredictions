@@ -1,8 +1,10 @@
 ---
-title: "Untitled"
+title: "Live NBA Predictions"
 author: "Ramzy Al-Amine"
 date: "11/19/2020"
-output: html_document
+output: 
+  html_document:
+    css: style.css
 ---
 
 ```{r setup, echo = FALSE, include=FALSE}
@@ -25,12 +27,25 @@ source(file.path(src_folder, "functions.R"))
 
 ```
 
-## LIVE NBA Game Predictions
+### Summary
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+I use random forests to forecast win probabilities for NBA teams, based on performance over the 5 previous games. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+### Model Description 
 
+Performance is measured by advanced stats such as net rating, percent assists, percent turnovers, and a bunch of others (I will be adding info soon). I consider lags of 1, 2, and 3 games as well as a moving average of the previous 3 and 5 games to account for a team's momentum relative to its opponent going into a game. Considering all the lag transformations for both home and away team, the number of variables surpass 300. For now, the model is trained on 2018-19 data only.
+
+### Expected Accuracy  
+
+Right now, the model predicts the correct outcome exactly 2 thirds of the time. I expect this improve once I add training data and expand the features.
+
+### Code
+
+The code is written in R and is available on my Github. 
+
+### Today's date(*)
+
+For now, predicitons are made for games played on this day *last* year
 ```{r dataset, echo = FALSE, include = FALSE}
 
 # set date for which to predict games
@@ -43,52 +58,53 @@ game_ids <- game_logs(seasons = this_season, result_types = "team", season_types
   unique()
 
 # transform a series of Game IDs into modeling dataste
-# new_games <- prep_features(game_ids, this_season) %>% 
-#   mutate_if(is.logical, as.factor) %>% 
-#   mutate_if(is.character, as.factor)
+new_games <- prep_features(game_ids, this_season) %>%
+  mutate_if(is.logical, as.factor) %>%
+  mutate_if(is.character, as.factor)
+
+this_day
 
 ```
 
-## Including Plots
 
 ```{r predictions, echo=FALSE}
 
-# # load predictive model
-# pred_model <- readRDS(model_file)
-# 
-# # predict on new data set
-# predictions <- pred_model %>% 
-#   predict(new_games, type = c("class"))
-# 
-# probabilities <- readRDS(model_file) %>% 
-#   predict(new_games, "prob")
-# 
-# pred_df <- new_games %>% 
-#   select(idGame, dateGame, isWin, slugTeam, slugOpponent) %>% 
-#   bind_cols(predictions) %>% 
-#   bind_cols(probabilities) %>% 
-#   mutate(correct = case_when(isWin == .pred_class ~ "Correct", TRUE ~ "Incorrect")) 
-# 
-# pred_df
+# load predictive model
+pred_model <- readRDS(model_file)
+
+# predict on new data set
+predictions <- pred_model %>%
+  predict(new_games, type = c("class"))
+
+probabilities <- readRDS(model_file) %>%
+  predict(new_games, "prob")
+
+pred_df <- new_games %>%
+  select(idGame, dateGame, isWin, slugTeam, slugOpponent) %>%
+  bind_cols(predictions) %>%
+  bind_cols(probabilities) %>%
+  mutate(correct = case_when(isWin == .pred_class ~ "Correct", TRUE ~ "Incorrect"))
+
+pred_df
 
 ```
 
 
 ```{r}
 
-# # analyze overall performance
-# pred_df %>%
-#   count(correct) %>%
-#   mutate(pct = n / sum(n))
-# 
-# # analyze performance for close calls
-# close_calls <- (.25:.75)
-# pred_df %>%
-#   filter(between(.pred_TRUE, 0.25, 0.75)) %>%
-#   count(correct) %>%
-#   mutate(pct = n / sum(n))
-# 
-# plot_accuracy(pred_df)
+# analyze overall performance
+pred_df %>%
+  count(correct) %>%
+  mutate(pct = n / sum(n))
+
+# analyze performance for close calls
+close_calls <- (.25:.75)
+pred_df %>%
+  filter(between(.pred_TRUE, 0.25, 0.75)) %>%
+  count(correct) %>%
+  mutate(pct = n / sum(n))
+
+plot_accuracy(pred_df)
 
 ```
 
