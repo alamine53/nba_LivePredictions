@@ -3,8 +3,7 @@ title: "Live NBA Predictions"
 author: "Ramzy Al-Amine"
 date: "11/19/2020"
 output: 
-  html_document:
-    css: style.css
+  html_document
 ---
 
 ```{r setup, echo = FALSE, include=FALSE}
@@ -57,7 +56,7 @@ game_ids <- game_logs(seasons = this_season, result_types = "team", season_types
   select(idGame) %>% 
   unique()
 
-# transform a series of Game IDs into modeling dataste
+# transform a series of Game IDs into modeling dataset
 new_games <- prep_features(game_ids, this_season) %>%
   mutate_if(is.logical, as.factor) %>%
   mutate_if(is.character, as.factor)
